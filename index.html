@@ -8,7 +8,8 @@
   <meta property="og:description" content="Reels and short-form video for real estate, restaurants, salons, and local businesses.">
   <meta property="og:type" content="website">
   <title>Khizar Shahid — Video Editor</title>
-
+  <link rel="preload" href="videos/hero-1.mp4" as="video" type="video/mp4">
+  <link rel="preload" href="videos/work-1.mp4" as="video" type="video/mp4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
@@ -134,9 +135,8 @@
     .hero {
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 140px 48px 140px;
+      align-items: center;
+      padding: 120px 48px 80px;
       position: relative;
       background-color: var(--black);
       background-image:
@@ -146,21 +146,23 @@
     }
     .hero__inner {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 64px;
     }
-    .hero__title-block {
-      position: relative;
-      display: inline-block;
-      max-width: 100%;
+    .hero__left {
+      display: flex;
+      flex-direction: column;
     }
+    /* Right column: the carousel */
     .hero__media-stack {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
+      position: relative;
+      width: clamp(220px, 22vw, 320px);
       aspect-ratio: 9 / 16;
-      width: auto;
-      z-index: 0;
+      flex-shrink: 0;
       pointer-events: auto;
     }
     .hero__accent-shape {
@@ -218,10 +220,10 @@
     }
     .hero__carousel-nav {
       position: absolute;
-      bottom: 10px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 6;
+      z-index: 10;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -231,6 +233,7 @@
       border: 1px solid #333;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
+      pointer-events: auto;
     }
     .hero__nav-btn {
       width: 28px;
@@ -239,13 +242,17 @@
       border-radius: 50%;
       background: transparent;
       color: var(--white);
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
+      cursor: pointer !important;
+      pointer-events: auto !important;
       transition: border-color 0.2s ease, color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
     .hero__nav-btn:hover {
       border-color: var(--lime);
@@ -263,6 +270,8 @@
       border: none;
       padding: 0;
       background: #444;
+      cursor: pointer !important;
+      pointer-events: auto !important;
       transition: background 0.25s ease, width 0.25s ease;
     }
     .hero__carousel-dot.is-active {
@@ -272,14 +281,11 @@
     .hero__carousel-dot:hover { background: #888; }
     .hero__carousel-dot.is-active:hover { background: var(--lime); }
     .hero__heading {
-      position: relative;
-      z-index: 2;
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(56px, 10vw, 160px);
+      font-size: clamp(56px, 8vw, 130px);
       line-height: 0.92;
       letter-spacing: -0.02em;
       color: var(--white);
-      padding-left: clamp(100px, 18vw, 280px);
     }
     .hero__heading .word {
       display: inline-block;
@@ -298,7 +304,7 @@
       margin-top: 32px;
       font-size: 18px;
       color: var(--gray);
-      max-width: 420px;
+      max-width: 480px;
       opacity: 0;
       animation: fadeUp 0.8s ease 1.4s forwards;
     }
@@ -814,9 +820,9 @@
         padding-right: calc(50vw - 50% + 32px);
       }
       .section-heading { font-size: 64px; }
-      .hero__heading {
-        padding-left: clamp(88px, 24vw, 200px);
-      }
+      .hero { padding: 100px 32px 80px; }
+      .hero__inner { gap: 40px; }
+      .hero__media-stack { width: clamp(180px, 26vw, 260px); }
       #about .about__grid { grid-template-columns: 1fr; }
       .about__photo-wrap { max-width: 400px; margin: 0 auto; }
       .about__stats { grid-template-columns: 1fr 1fr; }
@@ -840,15 +846,18 @@
         padding-left: calc(50vw - 50% + 20px);
         padding-right: calc(50vw - 50% + 20px);
       }
-      .hero { padding: 120px 20px 100px; }
-      .hero__scroll-label { right: 20px; bottom: 24px; font-size: 10px; }
-      .hero__heading {
-        font-size: clamp(48px, 14vw, 72px);
-        padding-left: clamp(72px, 28vw, 120px);
+      /* Stack hero vertically on mobile: carousel first (top), then text */
+      .hero { padding: 100px 20px 60px; }
+      .hero__inner {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
       }
+      .hero__left { order: 2; }
+      .hero__media-stack { order: 1; width: 160px; margin: 0 auto; }
+      .hero__scroll-label { right: 20px; bottom: 24px; font-size: 10px; }
+      .hero__heading { font-size: clamp(48px, 14vw, 72px); }
       .hero__carousel-bg { border-radius: 10px; }
       .hero__accent-shape { border-radius: 10px; transform: translate(10px, 10px); }
-      .hero__name-plate { display: none; }
       .video-card { width: 200px; border-radius: 12px; }
       .section-heading { font-size: 48px; margin-bottom: 40px; }
       .about__heading { font-size: 48px; }
@@ -881,41 +890,43 @@
   <main>
     <section class="hero" id="hero" aria-label="Introduction">
       <div class="hero__inner">
-        <div class="hero__title-block" id="heroTitleBlock">
-          <div class="hero__media-stack" id="heroMediaStack">
-            <div class="hero__accent-shape" aria-hidden="true"></div>
-            <div class="hero__carousel-bg" id="heroCarousel">
-              <div class="hero-carousel__frame">
-                <div class="hero-carousel__slide is-active" data-slide="0">
-                  <video src="videos/hero-1.mp4" muted playsinline loop autoplay preload="auto"></video>
-                </div>
-                <div class="hero-carousel__slide" data-slide="1">
-                  <video data-src="videos/hero-2.mp4" muted playsinline loop preload="none"></video>
-                </div>
-                <div class="hero-carousel__slide" data-slide="2">
-                  <video data-src="videos/hero-3.mp4" muted playsinline loop preload="none"></video>
-                </div>
-                <div class="hero-carousel__slide" data-slide="3">
-                  <video data-src="videos/hero-4.mp4" muted playsinline loop preload="none"></video>
-                </div>
-              </div>
-              <div class="hero__carousel-nav" id="heroCarouselNav">
-                <button type="button" class="hero__nav-btn" id="heroPrev" aria-label="Previous reel">‹</button>
-                <div class="hero__carousel-dots" id="heroCarouselDots"></div>
-                <button type="button" class="hero__nav-btn" id="heroNext" aria-label="Next reel">›</button>
-              </div>
-            </div>
-          </div>
+        <!-- LEFT: heading + tagline + CTAs -->
+        <div class="hero__left">
           <h1 class="hero__heading" id="hero-heading">
             <span class="hero__line"><span class="word" style="animation-delay: 0.1s">I</span> <span class="word" style="animation-delay: 0.15s">MAKE</span> <span class="word" style="animation-delay: 0.2s">ADS</span></span><br>
             <span class="hero__line"><span class="word" style="animation-delay: 0.35s">THAT</span> <span class="word" style="animation-delay: 0.4s">PRODUCE</span></span><br>
             <span class="hero__line"><span class="word" style="animation-delay: 0.55s">ACTUAL</span> <span class="word word--stroke" style="animation-delay: 0.65s">RESULTS.</span></span>
           </h1>
+          <p class="hero__tagline">I edit Reels and short ads for real estate, local businesses, and brands that need more leads — not just more views.</p>
+          <div class="hero__ctas">
+            <a href="#work" class="btn btn--primary">View Work</a>
+            <a href="#contact" class="btn btn--ghost">Get in Touch</a>
+          </div>
         </div>
-        <p class="hero__tagline">I edit Reels and short ads for real estate, local businesses, and brands that need more leads — not just more views.</p>
-        <div class="hero__ctas">
-          <a href="#work" class="btn btn--primary">View Work</a>
-          <a href="#contact" class="btn btn--ghost">Get in Touch</a>
+        <!-- RIGHT: video carousel -->
+        <div class="hero__media-stack" id="heroMediaStack">
+          <div class="hero__accent-shape" aria-hidden="true"></div>
+          <div class="hero__carousel-bg" id="heroCarousel">
+            <div class="hero-carousel__frame">
+              <div class="hero-carousel__slide is-active" data-slide="0">
+                <video src="videos/hero-1.mp4" muted playsinline loop autoplay preload="auto"></video>
+              </div>
+              <div class="hero-carousel__slide" data-slide="1">
+                <video data-src="videos/hero-2.mp4" muted playsinline loop preload="none"></video>
+              </div>
+              <div class="hero-carousel__slide" data-slide="2">
+                <video data-src="videos/hero-3.mp4" muted playsinline loop preload="none"></video>
+              </div>
+              <div class="hero-carousel__slide" data-slide="3">
+                <video data-src="videos/hero-4.mp4" muted playsinline loop preload="none"></video>
+              </div>
+            </div>
+            <div class="hero__carousel-nav" id="heroCarouselNav">
+              <button type="button" class="hero__nav-btn" id="heroPrev" aria-label="Previous reel">&#8249;</button>
+              <div class="hero__carousel-dots" id="heroCarouselDots"></div>
+              <button type="button" class="hero__nav-btn" id="heroNext" aria-label="Next reel">&#8250;</button>
+            </div>
+          </div>
         </div>
       </div>
       <span class="hero__scroll-label">Scroll to explore</span>
@@ -936,19 +947,19 @@
             <video class="video-card__media" src="videos/work-1.mp4" muted playsinline loop autoplay preload="auto" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" data-src="videos/work-2.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
+            <video class="video-card__media" src="videos/work-2.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" data-src="videos/work-3.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
+            <video class="video-card__media" src="videos/work-3.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" data-src="videos/work-4.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
+            <video class="video-card__media" src="videos/work-4.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" data-src="videos/work-5.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
+            <video class="video-card__media" src="videos/work-5.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" data-src="videos/work-6.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
+            <video class="video-card__media" src="videos/work-6.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
           </article>
         </div>
       </div>
@@ -1041,285 +1052,179 @@
   <script>
     (function () {
 
-      /* ── Cursor ── */
-      const prefersFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-      if (prefersFinePointer) {
+      /* ── Custom cursor (desktop only) ── */
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
         const cursor = document.getElementById('cursor');
-        let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
-        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-        (function animateCursor() {
-          cursorX += (mouseX - cursorX) * 0.15;
-          cursorY += (mouseY - cursorY) * 0.15;
-          cursor.style.left = cursorX + 'px';
-          cursor.style.top = cursorY + 'px';
-          requestAnimationFrame(animateCursor);
+        let mx = 0, my = 0, cx = 0, cy = 0;
+        document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; });
+        (function tick() {
+          cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
+          cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+          requestAnimationFrame(tick);
         })();
-        document.querySelectorAll('a, button, .btn, .video-card, .contact-pill, .service-card').forEach((el) => {
-          el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
-          el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
+        document.querySelectorAll('a, .btn, .video-card, .contact-pill, .service-card').forEach(function(el) {
+          el.addEventListener('mouseenter', function() { cursor.classList.add('is-hover'); });
+          el.addEventListener('mouseleave', function() { cursor.classList.remove('is-hover'); });
         });
       } else {
         document.body.style.cursor = 'auto';
+        var cursorEl = document.getElementById('cursor');
+        if (cursorEl) cursorEl.style.display = 'none';
       }
 
-      /* ── Video helpers ── */
-      /* Load a video from data-src if src not yet set, then prime it */
-      function loadAndPrimeVideo(vid, shouldPlay) {
+      /* ── Video loader: promotes data-src → src on demand ── */
+      function loadVideo(vid, play) {
         if (!vid) return;
-        /* Resolve src: use existing src or promote data-src */
         if (!vid.src || vid.src === window.location.href) {
-          const dataSrc = vid.getAttribute('data-src');
-          if (!dataSrc) return;
-          vid.src = dataSrc;
+          var s = vid.getAttribute('data-src');
+          if (!s) return;
+          vid.src = s;
           vid.load();
         }
-        vid.muted = true;
-        vid.loop = true;
-        vid.playsInline = true;
-        vid.setAttribute('muted', '');
-        vid.setAttribute('playsinline', '');
-
-        const showAndPlay = () => {
-          vid.classList.add('is-loaded', 'is-ready');
-          if (shouldPlay) vid.play().catch(() => {});
-        };
-        if (vid.readyState >= 2) {
-          showAndPlay();
-        } else {
-          vid.addEventListener('canplay', showAndPlay, { once: true });
-          vid.addEventListener('loadeddata', showAndPlay, { once: true });
-        }
+        vid.muted = true; vid.loop = true; vid.playsInline = true;
+        function go() { vid.classList.add('is-ready'); if (play) vid.play().catch(function(){}); }
+        if (vid.readyState >= 2) { go(); }
+        else { vid.addEventListener('canplay', go, { once: true }); vid.addEventListener('loadeddata', go, { once: true }); }
       }
 
       /* ── Hero carousel ── */
-      const heroMediaStack = document.getElementById('heroMediaStack');
-      const heroHeading    = document.getElementById('hero-heading');
-      const heroSlides     = Array.from(document.querySelectorAll('.hero-carousel__slide'));
-      let heroIndex = 0;
+      var slides = Array.from(document.querySelectorAll('.hero-carousel__slide'));
+      var idx = 0;
 
-      function syncHeroCarouselHeight() {
-        if (heroMediaStack && heroHeading)
-          heroMediaStack.style.height = heroHeading.offsetHeight + 'px';
-      }
-
-      function updateHeroDots() {
-        document.querySelectorAll('.hero__carousel-dot').forEach((dot, i) => {
-          dot.classList.toggle('is-active', i === heroIndex);
-          dot.setAttribute('aria-selected', i === heroIndex ? 'true' : 'false');
-        });
-      }
-
-      function goHeroSlide(index) {
-        heroIndex = ((index % heroSlides.length) + heroSlides.length) % heroSlides.length;
-        heroSlides.forEach((s, i) => {
-          s.classList.toggle('is-active', i === heroIndex);
-          const vid = s.querySelector('video');
-          if (!vid) return;
-          if (i === heroIndex) {
-            loadAndPrimeVideo(vid, true);
-            /* Pre-warm the next slide too */
-            const nextVid = heroSlides[(heroIndex + 1) % heroSlides.length]?.querySelector('video');
-            if (nextVid && !nextVid.src) {
-              nextVid.src = nextVid.getAttribute('data-src') || '';
-              if (nextVid.src) nextVid.load();
-            }
+      function goTo(n) {
+        idx = ((n % slides.length) + slides.length) % slides.length;
+        slides.forEach(function(s, i) {
+          var active = i === idx;
+          s.classList.toggle('is-active', active);
+          var v = s.querySelector('video');
+          if (!v) return;
+          if (active) {
+            loadVideo(v, true);
+            /* Pre-warm next */
+            var nextV = slides[(idx + 1) % slides.length].querySelector('video');
+            if (nextV && !nextV.src) { nextV.setAttribute('src', nextV.getAttribute('data-src') || ''); nextV.load(); }
           } else {
-            vid.pause();
+            v.pause();
           }
         });
-        updateHeroDots();
+        document.querySelectorAll('.hero__carousel-dot').forEach(function(d, i) {
+          d.classList.toggle('is-active', i === idx);
+        });
       }
 
-      function initHeroCarousel() {
-        /* Build dots */
-        const dotsContainer = document.getElementById('heroCarouselDots');
-        if (dotsContainer) {
-          dotsContainer.innerHTML = '';
-          heroSlides.forEach((_, i) => {
-            const dot = document.createElement('button');
-            dot.type = 'button';
-            dot.className = 'hero__carousel-dot' + (i === 0 ? ' is-active' : '');
-            dot.setAttribute('role', 'tab');
-            dot.setAttribute('aria-label', 'Show reel ' + (i + 1));
-            dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-            dot.addEventListener('click', () => goHeroSlide(i));
-            dotsContainer.appendChild(dot);
-          });
-        }
+      /* Wire buttons immediately — no waiting for load event */
+      var prevBtn = document.getElementById('heroPrev');
+      var nextBtn = document.getElementById('heroNext');
+      if (prevBtn) { prevBtn.onclick = function() { goTo(idx - 1); }; }
+      if (nextBtn) { nextBtn.onclick = function() { goTo(idx + 1); }; }
 
-        /* Wire prev/next — grab elements fresh here, after DOM is ready */
-        const prevBtn = document.getElementById('heroPrev');
-        const nextBtn = document.getElementById('heroNext');
-        if (prevBtn) prevBtn.addEventListener('click', () => goHeroSlide(heroIndex - 1));
-        if (nextBtn) nextBtn.addEventListener('click', () => goHeroSlide(heroIndex + 1));
-
-        syncHeroCarouselHeight();
-        /* Prime the first slide video immediately */
-        loadAndPrimeVideo(heroSlides[0]?.querySelector('video'), true);
+      /* Build dots */
+      var dotsWrap = document.getElementById('heroCarouselDots');
+      if (dotsWrap) {
+        slides.forEach(function(_, i) {
+          var d = document.createElement('button');
+          d.type = 'button';
+          d.className = 'hero__carousel-dot' + (i === 0 ? ' is-active' : '');
+          d.setAttribute('aria-label', 'Reel ' + (i + 1));
+          d.style.cursor = 'pointer';
+          d.onclick = function() { goTo(i); };
+          dotsWrap.appendChild(d);
+        });
       }
+
+      /* Start first slide */
+      loadVideo(slides[0] && slides[0].querySelector('video'), true);
 
       /* ── Text marquee ── */
-      const MARQUEE_PHRASES = [
-        'REAL ESTATE REELS','BUSINESS ADS','LISTING VIDEOS','RESTAURANT PROMOS',
-        'AGENT SPOTLIGHTS','LOCAL BRAND CONTENT','SALON & CLINIC REELS','PRODUCT LAUNCHES'
-      ];
-
-      function buildMarqueeItem() {
-        const item = document.createElement('span');
+      var PHRASES = ['REAL ESTATE REELS','BUSINESS ADS','LISTING VIDEOS','RESTAURANT PROMOS','AGENT SPOTLIGHTS','LOCAL BRAND CONTENT','SALON & CLINIC REELS','PRODUCT LAUNCHES'];
+      function buildItem() {
+        var item = document.createElement('span');
         item.className = 'marquee__item';
-        MARQUEE_PHRASES.forEach((phrase) => {
-          const text = document.createElement('span');
-          text.className = 'marquee__phrase';
-          text.textContent = phrase;
-          item.appendChild(text);
-          const sep = document.createElement('span');
-          sep.className = 'marquee__sep';
-          sep.textContent = '❇️';
-          sep.setAttribute('aria-hidden', 'true');
-          item.appendChild(sep);
+        PHRASES.forEach(function(p) {
+          var t = document.createElement('span'); t.className = 'marquee__phrase'; t.textContent = p; item.appendChild(t);
+          var s = document.createElement('span'); s.className = 'marquee__sep'; s.textContent = '❇️'; s.setAttribute('aria-hidden','true'); item.appendChild(s);
         });
         return item;
       }
-
       function initTextMarquee() {
-        const track = document.getElementById('textMarqueeTrack');
-        if (!track || track.dataset.marqueeReady) return;
-        track.replaceChildren(buildMarqueeItem());
-        const minWidth = window.innerWidth * 2.5;
-        while (track.scrollWidth < minWidth) {
-          const copy = buildMarqueeItem();
-          copy.setAttribute('aria-hidden', 'true');
-          track.appendChild(copy);
-        }
-        Array.from(track.children).forEach(() => {
-          const copy = buildMarqueeItem();
-          copy.setAttribute('aria-hidden', 'true');
-          track.appendChild(copy);
-        });
-        requestAnimationFrame(() => {
-          const loopDistance = track.scrollWidth / 2;
-          track.style.setProperty('--marquee-end', '-' + loopDistance + 'px');
-          track.style.setProperty('--marquee-duration', Math.max(loopDistance / 100, 12) + 's');
-          track.classList.add('is-animated');
-          track.dataset.marqueeReady = 'true';
+        var track = document.getElementById('textMarqueeTrack');
+        if (!track || track.dataset.ready) return;
+        track.replaceChildren(buildItem());
+        while (track.scrollWidth < window.innerWidth * 2.5) { var c = buildItem(); c.setAttribute('aria-hidden','true'); track.appendChild(c); }
+        Array.from(track.children).forEach(function() { var c = buildItem(); c.setAttribute('aria-hidden','true'); track.appendChild(c); });
+        requestAnimationFrame(function() {
+          var d = track.scrollWidth / 2;
+          track.style.setProperty('--marquee-end', '-' + d + 'px');
+          track.style.setProperty('--marquee-duration', Math.max(d / 100, 12) + 's');
+          track.classList.add('is-animated'); track.dataset.ready = '1';
         });
       }
 
-      /* ── Work marquee — lazy-load videos as they scroll into view ── */
+      /* ── Work marquee with lazy video loading ── */
       function initWorkMarquee() {
-        const track = document.getElementById('workMarqueeTrack');
-        if (!track || track.dataset.marqueeReady) return;
-
-        const originals = Array.from(track.querySelectorAll('.video-card')).slice(0, 6);
-
-        /* Use IntersectionObserver to load each video only when visible */
-        const videoObserver = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const vid = entry.target.querySelector('video');
-              if (vid) loadAndPrimeVideo(vid, true);
-              videoObserver.unobserve(entry.target);
-            }
+        var track = document.getElementById('workMarqueeTrack');
+        if (!track || track.dataset.ready) return;
+        var originals = Array.from(track.querySelectorAll('.video-card')).slice(0, 6);
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) { loadVideo(e.target.querySelector('video'), true); observer.unobserve(e.target); }
           });
         }, { rootMargin: '200px' });
-
-        originals.forEach((card) => videoObserver.observe(card));
-
-        /* Clone cards for seamless loop — copy data-src onto clones */
-        originals.forEach((card) => {
-          const clone = card.cloneNode(true);
-          const origVid = card.querySelector('video');
-          const cloneVid = clone.querySelector('video');
-          if (cloneVid && origVid) {
-            const src = origVid.getAttribute('src') || origVid.getAttribute('data-src');
-            if (src) { cloneVid.src = ''; cloneVid.setAttribute('data-src', src); }
-          }
-          track.appendChild(clone);
-          videoObserver.observe(clone);
+        originals.forEach(function(card) { observer.observe(card); });
+        originals.forEach(function(card) {
+          var clone = card.cloneNode(true);
+          var ov = card.querySelector('video'), cv = clone.querySelector('video');
+          if (ov && cv) { var s = ov.getAttribute('src') || ov.getAttribute('data-src'); if (s) { cv.removeAttribute('src'); cv.setAttribute('data-src', s); } }
+          track.appendChild(clone); observer.observe(clone);
         });
-
-        requestAnimationFrame(() => {
-          const distance = track.scrollWidth / 2;
-          track.style.setProperty('--marquee-end', '-' + distance + 'px');
-          track.style.setProperty('--work-marquee-duration', Math.max(distance / 60, 20) + 's');
-          track.classList.add('is-animated');
-          track.dataset.marqueeReady = 'true';
+        requestAnimationFrame(function() {
+          var d = track.scrollWidth / 2;
+          track.style.setProperty('--marquee-end', '-' + d + 'px');
+          track.style.setProperty('--work-marquee-duration', Math.max(d / 60, 20) + 's');
+          track.classList.add('is-animated'); track.dataset.ready = '1';
         });
       }
 
       /* ── Profile image ── */
-      function loadProfileImage() {
-        const profileImg = document.getElementById('aboutProfileImg');
-        if (!profileImg) return;
-        const src = profileImg.getAttribute('data-src');
-        if (!src) return;
-        profileImg.onload = () => {
-          profileImg.classList.add('is-loaded');
-          document.getElementById('aboutPhoto')?.classList.add('has-photo');
-        };
-        profileImg.onerror = () => { profileImg.removeAttribute('src'); };
-        profileImg.src = src;
+      function loadProfile() {
+        var img = document.getElementById('aboutProfileImg');
+        if (!img) return;
+        var s = img.getAttribute('data-src'); if (!s) return;
+        img.onload = function() { img.classList.add('is-loaded'); var p = document.getElementById('aboutPhoto'); if (p) p.classList.add('has-photo'); };
+        img.onerror = function() { img.removeAttribute('src'); };
+        img.src = s;
       }
 
-      /* ── Nav scroll state ── */
-      const nav = document.getElementById('nav');
-      window.addEventListener('scroll', () => {
-        nav.classList.toggle('is-scrolled', window.scrollY > 40);
-      }, { passive: true });
+      window.addEventListener('load', function() {
+        initTextMarquee(); initWorkMarquee(); loadProfile();
+      });
+
+      /* ── Scroll: nav opacity ── */
+      var nav = document.getElementById('nav');
+      window.addEventListener('scroll', function() { nav.classList.toggle('is-scrolled', window.scrollY > 40); }, { passive: true });
 
       /* ── Active nav link ── */
-      const navLinks = document.querySelectorAll('.nav__links a[data-section]');
-      ['work', 'about', 'contact'].forEach((id) => {
-        const sec = document.getElementById(id);
-        if (!sec) return;
-        new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting)
-              navLinks.forEach((link) => link.classList.toggle('is-active', link.dataset.section === id));
-          });
+      var navLinks = document.querySelectorAll('.nav__links a[data-section]');
+      ['work','about','contact'].forEach(function(id) {
+        var sec = document.getElementById(id); if (!sec) return;
+        new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) { if (e.isIntersecting) navLinks.forEach(function(l) { l.classList.toggle('is-active', l.dataset.section === id); }); });
         }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 }).observe(sec);
       });
 
       /* ── Scroll reveal ── */
-      document.querySelectorAll('.reveal').forEach((el) => {
-        new IntersectionObserver((entries, obs) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) { entry.target.classList.add('is-visible'); obs.unobserve(entry.target); }
-          });
+      document.querySelectorAll('.reveal').forEach(function(el) {
+        new IntersectionObserver(function(entries, obs) {
+          entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); } });
         }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }).observe(el);
       });
 
-      /* ── Boot ── */
-      /* Run carousel init as soon as DOM is ready (don't wait for full load) */
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initHeroCarousel);
-      } else {
-        initHeroCarousel();
-      }
-
-      window.addEventListener('load', () => {
-        initTextMarquee();
-        initWorkMarquee();
-        loadProfileImage();
-      });
-
-      window.addEventListener('resize', () => {
-        syncHeroCarouselHeight();
-        /* Reset text marquee */
-        const textTrack = document.getElementById('textMarqueeTrack');
-        if (textTrack) {
-          textTrack.classList.remove('is-animated');
-          delete textTrack.dataset.marqueeReady;
-        }
-        initTextMarquee();
-        /* Reset work marquee */
-        const workTrack = document.getElementById('workMarqueeTrack');
-        if (workTrack) {
-          workTrack.classList.remove('is-animated');
-          delete workTrack.dataset.marqueeReady;
-          while (workTrack.children.length > 6) workTrack.lastChild.remove();
-          initWorkMarquee();
-        }
+      /* ── Resize ── */
+      window.addEventListener('resize', function() {
+        var tt = document.getElementById('textMarqueeTrack');
+        if (tt) { tt.classList.remove('is-animated'); delete tt.dataset.ready; initTextMarquee(); }
+        var wt = document.getElementById('workMarqueeTrack');
+        if (wt) { wt.classList.remove('is-animated'); delete wt.dataset.ready; while (wt.children.length > 6) wt.lastChild.remove(); initWorkMarquee(); }
       });
 
     })();
