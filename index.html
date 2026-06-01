@@ -8,8 +8,7 @@
   <meta property="og:description" content="Reels and short-form video for real estate, restaurants, salons, and local businesses.">
   <meta property="og:type" content="website">
   <title>Khizar Shahid — Video Editor</title>
-  <link rel="preload" href="videos/hero-1.mp4" as="video" type="video/mp4">
-  <link rel="preload" href="videos/work-1.mp4" as="video" type="video/mp4">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
@@ -891,13 +890,13 @@
                   <video src="videos/hero-1.mp4" muted playsinline loop autoplay preload="auto"></video>
                 </div>
                 <div class="hero-carousel__slide" data-slide="1">
-                  <video src="videos/hero-2.mp4" muted playsinline loop preload="metadata"></video>
+                  <video data-src="videos/hero-2.mp4" muted playsinline loop preload="none"></video>
                 </div>
                 <div class="hero-carousel__slide" data-slide="2">
-                  <video src="videos/hero-3.mp4" muted playsinline loop preload="metadata"></video>
+                  <video data-src="videos/hero-3.mp4" muted playsinline loop preload="none"></video>
                 </div>
                 <div class="hero-carousel__slide" data-slide="3">
-                  <video src="videos/hero-4.mp4" muted playsinline loop preload="metadata"></video>
+                  <video data-src="videos/hero-4.mp4" muted playsinline loop preload="none"></video>
                 </div>
               </div>
               <div class="hero__carousel-nav" id="heroCarouselNav">
@@ -937,19 +936,19 @@
             <video class="video-card__media" src="videos/work-1.mp4" muted playsinline loop autoplay preload="auto" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-2.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-2.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-3.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-3.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-4.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-4.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-5.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-5.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-6.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-6.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
           </article>
         </div>
       </div>
@@ -1041,25 +1040,21 @@
 
   <script>
     (function () {
-      const prefersFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+      /* ── Cursor ── */
+      const prefersFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       if (prefersFinePointer) {
         const cursor = document.getElementById('cursor');
         let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
-        const lerp = 0.15;
-        document.addEventListener('mousemove', (e) => {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-        });
-        function animateCursor() {
-          cursorX += (mouseX - cursorX) * lerp;
-          cursorY += (mouseY - cursorY) * lerp;
+        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+        (function animateCursor() {
+          cursorX += (mouseX - cursorX) * 0.15;
+          cursorY += (mouseY - cursorY) * 0.15;
           cursor.style.left = cursorX + 'px';
           cursor.style.top = cursorY + 'px';
           requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
-        document.querySelectorAll('a, button, .btn, .video-card, .contact-pill, .service-card, .hero__nav-btn, .hero__carousel-dot').forEach((el) => {
+        })();
+        document.querySelectorAll('a, button, .btn, .video-card, .contact-pill, .service-card').forEach((el) => {
           el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
           el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
         });
@@ -1067,16 +1062,106 @@
         document.body.style.cursor = 'auto';
       }
 
-      /* Text marquee — clone until seamless, then animate exact pixel width */
+      /* ── Video helpers ── */
+      /* Load a video from data-src if src not yet set, then prime it */
+      function loadAndPrimeVideo(vid, shouldPlay) {
+        if (!vid) return;
+        /* Resolve src: use existing src or promote data-src */
+        if (!vid.src || vid.src === window.location.href) {
+          const dataSrc = vid.getAttribute('data-src');
+          if (!dataSrc) return;
+          vid.src = dataSrc;
+          vid.load();
+        }
+        vid.muted = true;
+        vid.loop = true;
+        vid.playsInline = true;
+        vid.setAttribute('muted', '');
+        vid.setAttribute('playsinline', '');
+
+        const showAndPlay = () => {
+          vid.classList.add('is-loaded', 'is-ready');
+          if (shouldPlay) vid.play().catch(() => {});
+        };
+        if (vid.readyState >= 2) {
+          showAndPlay();
+        } else {
+          vid.addEventListener('canplay', showAndPlay, { once: true });
+          vid.addEventListener('loadeddata', showAndPlay, { once: true });
+        }
+      }
+
+      /* ── Hero carousel ── */
+      const heroMediaStack = document.getElementById('heroMediaStack');
+      const heroHeading    = document.getElementById('hero-heading');
+      const heroSlides     = Array.from(document.querySelectorAll('.hero-carousel__slide'));
+      let heroIndex = 0;
+
+      function syncHeroCarouselHeight() {
+        if (heroMediaStack && heroHeading)
+          heroMediaStack.style.height = heroHeading.offsetHeight + 'px';
+      }
+
+      function updateHeroDots() {
+        document.querySelectorAll('.hero__carousel-dot').forEach((dot, i) => {
+          dot.classList.toggle('is-active', i === heroIndex);
+          dot.setAttribute('aria-selected', i === heroIndex ? 'true' : 'false');
+        });
+      }
+
+      function goHeroSlide(index) {
+        heroIndex = ((index % heroSlides.length) + heroSlides.length) % heroSlides.length;
+        heroSlides.forEach((s, i) => {
+          s.classList.toggle('is-active', i === heroIndex);
+          const vid = s.querySelector('video');
+          if (!vid) return;
+          if (i === heroIndex) {
+            loadAndPrimeVideo(vid, true);
+            /* Pre-warm the next slide too */
+            const nextVid = heroSlides[(heroIndex + 1) % heroSlides.length]?.querySelector('video');
+            if (nextVid && !nextVid.src) {
+              nextVid.src = nextVid.getAttribute('data-src') || '';
+              if (nextVid.src) nextVid.load();
+            }
+          } else {
+            vid.pause();
+          }
+        });
+        updateHeroDots();
+      }
+
+      function initHeroCarousel() {
+        /* Build dots */
+        const dotsContainer = document.getElementById('heroCarouselDots');
+        if (dotsContainer) {
+          dotsContainer.innerHTML = '';
+          heroSlides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'hero__carousel-dot' + (i === 0 ? ' is-active' : '');
+            dot.setAttribute('role', 'tab');
+            dot.setAttribute('aria-label', 'Show reel ' + (i + 1));
+            dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+            dot.addEventListener('click', () => goHeroSlide(i));
+            dotsContainer.appendChild(dot);
+          });
+        }
+
+        /* Wire prev/next — grab elements fresh here, after DOM is ready */
+        const prevBtn = document.getElementById('heroPrev');
+        const nextBtn = document.getElementById('heroNext');
+        if (prevBtn) prevBtn.addEventListener('click', () => goHeroSlide(heroIndex - 1));
+        if (nextBtn) nextBtn.addEventListener('click', () => goHeroSlide(heroIndex + 1));
+
+        syncHeroCarouselHeight();
+        /* Prime the first slide video immediately */
+        loadAndPrimeVideo(heroSlides[0]?.querySelector('video'), true);
+      }
+
+      /* ── Text marquee ── */
       const MARQUEE_PHRASES = [
-        'REAL ESTATE REELS',
-        'BUSINESS ADS',
-        'LISTING VIDEOS',
-        'RESTAURANT PROMOS',
-        'AGENT SPOTLIGHTS',
-        'LOCAL BRAND CONTENT',
-        'SALON & CLINIC REELS',
-        'PRODUCT LAUNCHES'
+        'REAL ESTATE REELS','BUSINESS ADS','LISTING VIDEOS','RESTAURANT PROMOS',
+        'AGENT SPOTLIGHTS','LOCAL BRAND CONTENT','SALON & CLINIC REELS','PRODUCT LAUNCHES'
       ];
 
       function buildMarqueeItem() {
@@ -1099,237 +1184,144 @@
       function initTextMarquee() {
         const track = document.getElementById('textMarqueeTrack');
         if (!track || track.dataset.marqueeReady) return;
-
         track.replaceChildren(buildMarqueeItem());
-
         const minWidth = window.innerWidth * 2.5;
         while (track.scrollWidth < minWidth) {
           const copy = buildMarqueeItem();
           copy.setAttribute('aria-hidden', 'true');
           track.appendChild(copy);
         }
-
-        const firstHalf = Array.from(track.children);
-        firstHalf.forEach(() => {
+        Array.from(track.children).forEach(() => {
           const copy = buildMarqueeItem();
           copy.setAttribute('aria-hidden', 'true');
           track.appendChild(copy);
         });
-
         requestAnimationFrame(() => {
           const loopDistance = track.scrollWidth / 2;
-          const duration = Math.max(loopDistance / 100, 12);
           track.style.setProperty('--marquee-end', '-' + loopDistance + 'px');
-          track.style.setProperty('--marquee-duration', duration + 's');
+          track.style.setProperty('--marquee-duration', Math.max(loopDistance / 100, 12) + 's');
           track.classList.add('is-animated');
           track.dataset.marqueeReady = 'true';
         });
       }
 
+      /* ── Work marquee — lazy-load videos as they scroll into view ── */
       function initWorkMarquee() {
         const track = document.getElementById('workMarqueeTrack');
         if (!track || track.dataset.marqueeReady) return;
 
         const originals = Array.from(track.querySelectorAll('.video-card')).slice(0, 6);
-        originals.forEach((card) => primeVideo(card.querySelector('video'), true));
 
+        /* Use IntersectionObserver to load each video only when visible */
+        const videoObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const vid = entry.target.querySelector('video');
+              if (vid) loadAndPrimeVideo(vid, true);
+              videoObserver.unobserve(entry.target);
+            }
+          });
+        }, { rootMargin: '200px' });
+
+        originals.forEach((card) => videoObserver.observe(card));
+
+        /* Clone cards for seamless loop — copy data-src onto clones */
         originals.forEach((card) => {
           const clone = card.cloneNode(true);
           const origVid = card.querySelector('video');
           const cloneVid = clone.querySelector('video');
-          if (origVid?.src && cloneVid) {
-            cloneVid.src = origVid.src;
-            primeVideo(cloneVid, true);
+          if (cloneVid && origVid) {
+            const src = origVid.getAttribute('src') || origVid.getAttribute('data-src');
+            if (src) { cloneVid.src = ''; cloneVid.setAttribute('data-src', src); }
           }
           track.appendChild(clone);
+          videoObserver.observe(clone);
         });
 
         requestAnimationFrame(() => {
           const distance = track.scrollWidth / 2;
-          const duration = Math.max(distance / 60, 20);
           track.style.setProperty('--marquee-end', '-' + distance + 'px');
-          track.style.setProperty('--work-marquee-duration', duration + 's');
+          track.style.setProperty('--work-marquee-duration', Math.max(distance / 60, 20) + 's');
           track.classList.add('is-animated');
           track.dataset.marqueeReady = 'true';
         });
       }
 
-      function setupMarquees() {
-        initTextMarquee();
-        initWorkMarquee();
-      }
-
-      function resetTextMarquee() {
-        const track = document.getElementById('textMarqueeTrack');
-        if (!track) return;
-        track.classList.remove('is-animated');
-        delete track.dataset.marqueeReady;
-        track.replaceChildren(buildMarqueeItem());
-      }
-
-      /* Video helpers — src set in HTML for instant browser fetch */
-      function primeVideo(vid, shouldPlay) {
-        if (!vid || !vid.getAttribute('src')) return;
-
-        vid.muted = true;
-        vid.loop = true;
-        vid.playsInline = true;
-        vid.setAttribute('muted', '');
-        vid.setAttribute('playsinline', '');
-
-        const showAndPlay = () => {
-          vid.classList.add('is-loaded', 'is-ready');
-          if (shouldPlay) vid.play().catch(() => {});
-        };
-
-        if (vid.readyState >= 2) {
-          showAndPlay();
-        } else {
-          vid.addEventListener('canplay', showAndPlay, { once: true });
-          vid.addEventListener('loadeddata', showAndPlay, { once: true });
-        }
-      }
-
-      function warmHeroVideo(index) {
-        const vid = heroSlides[index]?.querySelector('video');
-        if (!vid) return;
-        if (vid.preload !== 'auto') {
-          vid.preload = 'auto';
-          vid.load();
-        }
-      }
-
-      /* Hero carousel — manual controls, instant preload */
-      const heroMediaStack = document.getElementById('heroMediaStack');
-      const heroHeading = document.getElementById('hero-heading');
-      const heroSlides = Array.from(document.querySelectorAll('.hero-carousel__slide'));
-      const heroDotsContainer = document.getElementById('heroCarouselDots');
-      let heroIndex = 0;
-
-      function syncHeroCarouselHeight() {
-        if (!heroMediaStack || !heroHeading) return;
-        heroMediaStack.style.height = heroHeading.offsetHeight + 'px';
-      }
-
-      function updateHeroDots() {
-        if (!heroDotsContainer) return;
-        heroDotsContainer.querySelectorAll('.hero__carousel-dot').forEach((dot, i) => {
-          dot.classList.toggle('is-active', i === heroIndex);
-          dot.setAttribute('aria-selected', i === heroIndex ? 'true' : 'false');
-        });
-      }
-
-      function playHeroVideo(index) {
-        heroSlides.forEach((slide, i) => {
-          const vid = slide.querySelector('video');
-          if (!vid) return;
-          if (i === index) {
-            primeVideo(vid, true);
-          } else {
-            vid.pause();
-          }
-        });
-      }
-
-      function goHeroSlide(index) {
-        heroIndex = (index + heroSlides.length) % heroSlides.length;
-        heroSlides.forEach((s, i) => s.classList.toggle('is-active', i === heroIndex));
-        updateHeroDots();
-        warmHeroVideo(heroIndex);
-        warmHeroVideo((heroIndex + 1) % heroSlides.length);
-        playHeroVideo(heroIndex);
-      }
-
-      function initHeroCarousel() {
-        if (!heroDotsContainer) return;
-
-        heroDotsContainer.innerHTML = '';
-        heroSlides.forEach((_, i) => {
-          const dot = document.createElement('button');
-          dot.type = 'button';
-          dot.className = 'hero__carousel-dot' + (i === 0 ? ' is-active' : '');
-          dot.setAttribute('role', 'tab');
-          dot.setAttribute('aria-label', 'Show reel ' + (i + 1));
-          dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-          dot.addEventListener('click', () => goHeroSlide(i));
-          heroDotsContainer.appendChild(dot);
-        });
-
-        document.getElementById('heroPrev')?.addEventListener('click', () => goHeroSlide(heroIndex - 1));
-        document.getElementById('heroNext')?.addEventListener('click', () => goHeroSlide(heroIndex + 1));
-
-        warmHeroVideo(0);
-        warmHeroVideo(1);
-        goHeroSlide(0);
-      }
-
+      /* ── Profile image ── */
       function loadProfileImage() {
         const profileImg = document.getElementById('aboutProfileImg');
         if (!profileImg) return;
         const src = profileImg.getAttribute('data-src');
-        if (!src || profileImg.src) return;
+        if (!src) return;
         profileImg.onload = () => {
           profileImg.classList.add('is-loaded');
           document.getElementById('aboutPhoto')?.classList.add('has-photo');
         };
-        profileImg.onerror = () => {
-          profileImg.removeAttribute('src');
-        };
+        profileImg.onerror = () => { profileImg.removeAttribute('src'); };
         profileImg.src = src;
       }
 
-      /* Prime hero video #1 immediately */
-      primeVideo(document.querySelector('.hero-carousel__slide.is-active video'), true);
-
-      window.addEventListener('load', () => {
-        syncHeroCarouselHeight();
-        initHeroCarousel();
-        setupMarquees();
-        loadProfileImage();
-      });
-
-      window.addEventListener('resize', () => {
-        syncHeroCarouselHeight();
-        resetTextMarquee();
-        const workTrack = document.getElementById('workMarqueeTrack');
-        if (workTrack) {
-          workTrack.classList.remove('is-animated');
-          delete workTrack.dataset.marqueeReady;
-          while (workTrack.children.length > 6) workTrack.lastChild.remove();
-        }
-        setupMarquees();
-      });
-
+      /* ── Nav scroll state ── */
       const nav = document.getElementById('nav');
       window.addEventListener('scroll', () => {
         nav.classList.toggle('is-scrolled', window.scrollY > 40);
       }, { passive: true });
 
+      /* ── Active nav link ── */
       const navLinks = document.querySelectorAll('.nav__links a[data-section]');
       ['work', 'about', 'contact'].forEach((id) => {
         const sec = document.getElementById(id);
         if (!sec) return;
         new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              navLinks.forEach((link) => {
-                link.classList.toggle('is-active', link.dataset.section === id);
-              });
-            }
+            if (entry.isIntersecting)
+              navLinks.forEach((link) => link.classList.toggle('is-active', link.dataset.section === id));
           });
         }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 }).observe(sec);
       });
 
+      /* ── Scroll reveal ── */
       document.querySelectorAll('.reveal').forEach((el) => {
         new IntersectionObserver((entries, obs) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              obs.unobserve(entry.target);
-            }
+            if (entry.isIntersecting) { entry.target.classList.add('is-visible'); obs.unobserve(entry.target); }
           });
         }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }).observe(el);
       });
+
+      /* ── Boot ── */
+      /* Run carousel init as soon as DOM is ready (don't wait for full load) */
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHeroCarousel);
+      } else {
+        initHeroCarousel();
+      }
+
+      window.addEventListener('load', () => {
+        initTextMarquee();
+        initWorkMarquee();
+        loadProfileImage();
+      });
+
+      window.addEventListener('resize', () => {
+        syncHeroCarouselHeight();
+        /* Reset text marquee */
+        const textTrack = document.getElementById('textMarqueeTrack');
+        if (textTrack) {
+          textTrack.classList.remove('is-animated');
+          delete textTrack.dataset.marqueeReady;
+        }
+        initTextMarquee();
+        /* Reset work marquee */
+        const workTrack = document.getElementById('workMarqueeTrack');
+        if (workTrack) {
+          workTrack.classList.remove('is-animated');
+          delete workTrack.dataset.marqueeReady;
+          while (workTrack.children.length > 6) workTrack.lastChild.remove();
+          initWorkMarquee();
+        }
+      });
+
     })();
   </script>
 </body>
