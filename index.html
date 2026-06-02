@@ -9,7 +9,8 @@
   <meta property="og:type" content="website">
   <title>Khizar Shahid — Video Editor</title>
   <link rel="preload" href="videos/hero-1.mp4" as="video" type="video/mp4">
-  <link rel="preload" href="videos/work-1.mp4" as="video" type="video/mp4">
+<link rel="preload" href="videos/work-1.mp4" as="video" type="video/mp4">
+<link rel="preload" href="videos/work-2.mp4" as="video" type="video/mp4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
@@ -722,7 +723,7 @@
       flex-direction: column;
       min-height: 280px;
     }
-    .service-card:not(:first-child) {
+    .service-card__not(\:first-child) {
       padding-left: 40px;
       border-left: 1px solid #333;
     }
@@ -890,7 +891,6 @@
   <main>
     <section class="hero" id="hero" aria-label="Introduction">
       <div class="hero__inner">
-        <!-- LEFT: heading + tagline + CTAs -->
         <div class="hero__left">
           <h1 class="hero__heading" id="hero-heading">
             <span class="hero__line"><span class="word" style="animation-delay: 0.1s">I</span> <span class="word" style="animation-delay: 0.15s">MAKE</span> <span class="word" style="animation-delay: 0.2s">ADS</span></span><br>
@@ -903,13 +903,12 @@
             <a href="#contact" class="btn btn--ghost">Get in Touch</a>
           </div>
         </div>
-        <!-- RIGHT: video carousel -->
         <div class="hero__media-stack" id="heroMediaStack">
           <div class="hero__accent-shape" aria-hidden="true"></div>
           <div class="hero__carousel-bg" id="heroCarousel">
             <div class="hero-carousel__frame">
               <div class="hero-carousel__slide is-active" data-slide="0">
-                <video src="videos/hero-1.mp4" muted playsinline loop autoplay preload="auto"></video>
+                <video data-src="videos/hero-1.mp4" muted playsinline loop autoplay preload="auto"></video>
               </div>
               <div class="hero-carousel__slide" data-slide="1">
                 <video data-src="videos/hero-2.mp4" muted playsinline loop preload="none"></video>
@@ -944,22 +943,22 @@
       <div class="work-marquee" id="workMarquee">
         <div class="work-marquee__track" id="workMarqueeTrack">
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-1.mp4" muted playsinline loop autoplay preload="auto" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-1.mp4" muted playsinline loop aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-2.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-2.mp4" muted playsinline loop aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-3.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-3.mp4" muted playsinline loop aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-4.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-4.mp4" muted playsinline loop aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-5.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-5.mp4" muted playsinline loop aria-hidden="true"></video>
           </article>
           <article class="video-card">
-            <video class="video-card__media" src="videos/work-6.mp4" muted playsinline loop autoplay preload="metadata" aria-hidden="true"></video>
+            <video class="video-card__media" data-src="videos/work-6.mp4" muted playsinline loop aria-hidden="true"></video>
           </article>
         </div>
       </div>
@@ -1074,18 +1073,23 @@
 
       /* ── Video loader: promotes data-src → src on demand ── */
       function loadVideo(vid, play) {
-        if (!vid) return;
-        if (!vid.src || vid.src === window.location.href) {
-          var s = vid.getAttribute('data-src');
-          if (!s) return;
-          vid.src = s;
-          vid.load();
-        }
-        vid.muted = true; vid.loop = true; vid.playsInline = true;
-        function go() { vid.classList.add('is-ready'); if (play) vid.play().catch(function(){}); }
-        if (vid.readyState >= 2) { go(); }
-        else { vid.addEventListener('canplay', go, { once: true }); vid.addEventListener('loadeddata', go, { once: true }); }
-      }
+  if (!vid) return;
+  if (!vid.src || vid.src === window.location.href) {
+    var s = vid.getAttribute('data-src');
+    if (!s) return;
+    vid.src = s;
+    vid.load();
+  }
+  vid.muted = true; vid.loop = true; vid.playsInline = true;
+  
+  // Make the element visible immediately so there's no layout flashing
+  vid.classList.add('is-ready'); 
+  vid.classList.add('is-loaded'); 
+
+  if (play) {
+    vid.play().catch(function(){});
+  }
+}
 
       /* ── Hero carousel ── */
       var slides = Array.from(document.querySelectorAll('.hero-carousel__slide'));
@@ -1166,15 +1170,26 @@
         if (!track || track.dataset.ready) return;
         var originals = Array.from(track.querySelectorAll('.video-card')).slice(0, 6);
         var observer = new IntersectionObserver(function(entries) {
-          entries.forEach(function(e) {
-            if (e.isIntersecting) { loadVideo(e.target.querySelector('video'), true); observer.unobserve(e.target); }
+            entries.forEach(function(e) {
+            if (e.isIntersecting) { 
+                loadVideo(e.target.querySelector('video'), true); 
+                observer.unobserve(e.target); 
+            }
           });
-        }, { rootMargin: '200px' });
+        }, { rootMargin: '600px' }); // Triggers video downloads much sooner
         originals.forEach(function(card) { observer.observe(card); });
         originals.forEach(function(card) {
           var clone = card.cloneNode(true);
           var ov = card.querySelector('video'), cv = clone.querySelector('video');
-          if (ov && cv) { var s = ov.getAttribute('src') || ov.getAttribute('data-src'); if (s) { cv.removeAttribute('src'); cv.setAttribute('data-src', s); } }
+          
+          // FIX 2: Safely ensure the target clone retains its source parameter correctly
+          if (ov && cv) { 
+            var s = ov.getAttribute('data-src') || ov.getAttribute('src'); 
+            if (s) { 
+              cv.removeAttribute('src'); 
+              cv.setAttribute('data-src', s); 
+            } 
+          }
           track.appendChild(clone); observer.observe(clone);
         });
         requestAnimationFrame(function() {
@@ -1195,9 +1210,13 @@
         img.src = s;
       }
 
-      window.addEventListener('load', function() {
-        initTextMarquee(); initWorkMarquee(); loadProfile();
-      });
+     if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    initTextMarquee(); initWorkMarquee(); loadProfile();
+  });
+} else {
+  initTextMarquee(); initWorkMarquee(); loadProfile();
+}
 
       /* ── Scroll: nav opacity ── */
       var nav = document.getElementById('nav');
