@@ -44,7 +44,7 @@
       const item = profileCard(profiles[index++ % profiles.length]); item.dataset.fill = 'true'; item.setAttribute('aria-hidden', 'true'); item.inert = true; group.append(item);
     }
     const duplicate = group.cloneNode(true); duplicate.setAttribute('aria-hidden', 'true'); duplicate.removeAttribute('aria-label'); duplicate.inert = true; track.append(duplicate);
-    track.style.setProperty('--marquee-duration', `${Math.max(30, group.getBoundingClientRect().width / 28)}s`);
+    track.style.setProperty('--marquee-duration', `${Math.max(30, group.getBoundingClientRect().width / 28) * 2}s`);
   };
   sizeMarquee();
   window.addEventListener('resize', () => { cancelAnimationFrame(resizeFrame); resizeFrame = requestAnimationFrame(sizeMarquee); });
@@ -53,6 +53,25 @@
     motionToggle.setAttribute('aria-pressed', String(paused)); motionToggle.innerHTML = paused ? 'Resume motion <span aria-hidden="true">▷</span>' : 'Pause motion <span aria-hidden="true">Ⅱ</span>';
   });
   document.addEventListener('visibilitychange', () => marquee.classList.toggle('is-inactive', document.hidden));
+  const page = document.querySelector('main');
+  let gradientFrame;
+  const updatePageGradient = () => {
+    const y = element => element.getBoundingClientRect().top + window.scrollY;
+    const about = document.querySelector('#about');
+    const services = document.querySelector('#services');
+    const pricing = document.querySelector('#pricing');
+    const peak = y(about) + about.offsetHeight * 0.4;
+    document.body.style.setProperty('--ramp-start', `${y(services) * 0.52}px`);
+    document.body.style.setProperty('--ramp-mid', `${y(services)}px`);
+    document.body.style.setProperty('--ramp-pricing', `${y(pricing)}px`);
+    document.body.style.setProperty('--ramp-peak', `${peak}px`);
+    document.body.style.setProperty('--ramp-end', `${y(about) + about.offsetHeight + 300}px`);
+  };
+  const scheduleGradient = () => { cancelAnimationFrame(gradientFrame); gradientFrame = requestAnimationFrame(updatePageGradient); };
+  new ResizeObserver(scheduleGradient).observe(page);
+  document.fonts.ready.then(scheduleGradient);
+  window.addEventListener('resize', scheduleGradient);
+  updatePageGradient();
   const menu = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('#navigation');
   const closeMenu = () => { menu.setAttribute('aria-expanded', 'false'); menu.setAttribute('aria-label', 'Open navigation'); navigation.classList.remove('is-open'); };
