@@ -28,3 +28,7 @@ Use the existing project with Framework Preset **Other**, no build command, and 
 - Set the booking URL and WhatsApp number.
 - Confirm package scope, delivery terms, and portfolio descriptions.
 - Keep the existing production site until the preview is reviewed.
+
+## Client Instagram marquee
+
+Add handles without the @ symbol to the `clients` list in `site-config.js`. Empty lists show clearly marked lorem ipsum placeholder cards. Real handles become Instagram links; circular image placeholders remain until profile photos are supplied. The continuous marquee pauses on hover, keyboard focus, or the pause button, and becomes a manually scrollable strip for reduced-motion preferences.

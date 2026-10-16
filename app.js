@@ -13,6 +13,46 @@
     link.href = `https://wa.me/${number}?text=${encodeURIComponent('Hi Khizar, I would like to discuss a video editing project.')}`;
     link.target = '_blank'; link.rel = 'noopener noreferrer'; link.hidden = false;
   }
+  if (!bookingUrl) document.querySelectorAll('[data-book]').forEach(button => {
+    const label = button.querySelector('span');
+    if (label) label.textContent = 'Request a call';
+  });
+  const marquee = document.querySelector('#clients-marquee');
+  const track = document.querySelector('#clients-track');
+  const motionToggle = document.querySelector('#marquee-toggle');
+  const handles = Array.isArray(config.clients) ? [...new Set(config.clients.map(value => String(value).trim().replace(/^@/, '')).filter(value => /^[a-zA-Z0-9._]{1,30}$/.test(value)))] : [];
+  const placeholder = handles.length === 0;
+  document.querySelector('#clients-placeholder-note').hidden = !placeholder;
+  const profiles = placeholder ? ['lorem.ipsum', 'dolor.sit', 'amet.elit', 'ipsum.dolor', 'sit.amet', 'lorem.elit'] : handles;
+  const profileCard = handle => {
+    const item = document.createElement('li'); item.className = 'client-card';
+    const inner = placeholder ? item : document.createElement('a');
+    if (!placeholder) { inner.href = `https://www.instagram.com/${handle}/`; inner.target = '_blank'; inner.rel = 'noopener noreferrer'; inner.setAttribute('aria-label', `@${handle} on Instagram (opens in a new tab)`); item.append(inner); }
+    const avatar = document.createElement('span'); avatar.className = 'client-avatar'; avatar.setAttribute('aria-hidden', 'true');
+    avatar.innerHTML = '<svg viewBox="0 0 32 32"><circle cx="16" cy="11" r="5"/><path d="M6 27c0-6 4-9 10-9s10 3 10 9"/></svg>';
+    const label = document.createElement('span'); label.className = 'client-handle'; label.textContent = `@${handle}`;
+    inner.append(avatar, label); return item;
+  };
+  const group = document.createElement('ul'); group.className = 'client-group'; group.setAttribute('aria-label', placeholder ? 'Placeholder Instagram profiles' : 'Client Instagram profiles');
+  profiles.forEach(handle => group.append(profileCard(handle))); track.append(group);
+  let resizeFrame;
+  const sizeMarquee = () => {
+    group.querySelectorAll('[data-fill]').forEach(item => item.remove());
+    track.querySelectorAll('.client-group[aria-hidden]').forEach(item => item.remove());
+    let index = 0;
+    while (group.getBoundingClientRect().width < marquee.clientWidth + 180 && index < 40) {
+      const item = profileCard(profiles[index++ % profiles.length]); item.dataset.fill = 'true'; item.setAttribute('aria-hidden', 'true'); item.inert = true; group.append(item);
+    }
+    const duplicate = group.cloneNode(true); duplicate.setAttribute('aria-hidden', 'true'); duplicate.removeAttribute('aria-label'); duplicate.inert = true; track.append(duplicate);
+    track.style.setProperty('--marquee-duration', `${Math.max(30, group.getBoundingClientRect().width / 28)}s`);
+  };
+  sizeMarquee();
+  window.addEventListener('resize', () => { cancelAnimationFrame(resizeFrame); resizeFrame = requestAnimationFrame(sizeMarquee); });
+  motionToggle.addEventListener('click', () => {
+    const paused = !marquee.classList.contains('is-paused'); marquee.classList.toggle('is-paused', paused);
+    motionToggle.setAttribute('aria-pressed', String(paused)); motionToggle.innerHTML = paused ? 'Resume motion <span aria-hidden="true">▷</span>' : 'Pause motion <span aria-hidden="true">Ⅱ</span>';
+  });
+  document.addEventListener('visibilitychange', () => marquee.classList.toggle('is-inactive', document.hidden));
   const menu = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('#navigation');
   const closeMenu = () => { menu.setAttribute('aria-expanded', 'false'); menu.setAttribute('aria-label', 'Open navigation'); navigation.classList.remove('is-open'); };
@@ -22,7 +62,7 @@
   document.addEventListener('click', e => { if (!e.target.closest('.nav')) closeMenu(); });
   matchMedia('(min-width: 761px)').addEventListener('change', closeMenu);
   const more = document.querySelector('#more-work');
-  more.addEventListener('click', () => { const expanded = more.getAttribute('aria-expanded') !== 'true'; document.querySelectorAll('.extra-work').forEach(card => card.hidden = !expanded); more.setAttribute('aria-expanded', String(expanded)); more.innerHTML = expanded ? 'Show less <span>−</span>' : 'More selected work <span>+</span>'; });
+  more.addEventListener('click', () => { const expanded = more.getAttribute('aria-expanded') !== 'true'; document.querySelectorAll('.extra-work').forEach(card => card.hidden = !expanded); more.setAttribute('aria-expanded', String(expanded)); more.innerHTML = expanded ? 'Show less <span>−</span>' : 'More edits <span>+</span>'; });
   const videoDialog = document.querySelector('#video-dialog');
   const player = document.querySelector('#portfolio-player');
   const errorMessage = document.querySelector('#video-error');

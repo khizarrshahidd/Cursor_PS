@@ -4,5 +4,7 @@ window.SITE_CONFIG = {
   bookingUrl: '',
   whatsappNumber: '',
   email: 'khizarrshahidd@gmail.com',
-  instagram: 'https://instagram.com/khizarrshahidd'
+  instagram: 'https://instagram.com/khizarrshahidd',
+  // Add real handles without @. Empty list shows clearly marked lorem ipsum cards.
+  clients: []
 };
